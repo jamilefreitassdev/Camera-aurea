@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#050302">
+<meta name="description" content="Arquivo Áureo — história, aplicações, teoremas e câmera áurea.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Arquivo Áureo</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:wght@500;600&display=swap');
+
+:root{
+  --gold:#d4af37;
+  --gold2:#ffd45a;
+  --bg:#050302;
+  --panel:#100a05;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--gold);
+  font-family:Cinzel,Georgia,serif;overflow-x:hidden;
+}
+button,a{font:inherit}
+.topbar{
+  position:fixed;z-index:50;top:0;left:0;right:0;
+  height:64px;padding:10px 24px;display:flex;align-items:center;
+  justify-content:space-between;background:linear-gradient(#050302ee,#05030266,transparent);
+  backdrop-filter:blur(4px);
+}
+.brand{letter-spacing:3px;font-size:14px;text-decoration:none;color:var(--gold)}
+.nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.nav button{
+  color:var(--gold);background:#090603cc;border:1px solid #8d6419;
+  border-radius:24px;padding:8px 14px;cursor:pointer;transition:.25s;
+}
+.nav button:hover{background:#4b2d09;color:#fff1b0;box-shadow:0 0 18px #9d6d1b55}
+.hero{
+  min-height:100svh;display:flex;align-items:center;justify-content:center;
+  background:#000 url("hero-arquivo-aureo.png") center top/cover no-repeat;
+  position:relative;
+}
+.hero::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,#00000008,#00000015 50%,#00000025);
+}
+.hero-actions{
+  position:absolute;z-index:2;top:58%;left:5%;right:5%;
+  display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:18px;
+  max-width:900px;margin:auto;
+}
+.action{
+  border:1px solid #8d5d0e;border-radius:40px;padding:15px 20px;
+  color:#e1b84a;background:linear-gradient(90deg,#080402e8,#5a3508dd);
+  cursor:pointer;box-shadow:inset 0 0 0 1px #000;transition:.25s;
+  text-align:center;letter-spacing:1px;
+}
+.action:hover{transform:translateY(-2px);box-shadow:0 0 22px #9d6d1b66;color:#fff0ad}
+.section{
+  min-height:100svh;padding:110px 7vw 70px;position:relative;
+  background:radial-gradient(circle at 70% 25%,#5a350815,transparent 38%),#050302;
+}
+.section h2{font-family:"Cormorant Garamond",serif;font-size:clamp(2rem,5vw,4rem);font-weight:500;margin:0 0 30px}
+.content{max-width:1050px;margin:auto}
+.card{
+  border:1px solid #67450f;background:#090604cc;border-radius:18px;
+  padding:25px;margin:18px 0;box-shadow:0 0 35px #000;
+}
+.card h3{font-family:"Cormorant Garamond",serif;font-size:1.9rem;font-weight:500;margin:0 0 14px}
+.card p{font-family:Georgia,serif;color:#d5a93d;line-height:1.75;font-size:1rem}
+.ref{
+  display:inline-block;margin-top:8px;padding:8px 18px;border:1px solid #79530f;
+  border-radius:20px;color:#e2b94f;text-decoration:none;font-size:.8rem;
+}
+.camera-modal{
+  position:fixed;inset:0;z-index:100;display:none;background:#000;
+  align-items:center;justify-content:center;padding:12px;
+}
+.camera-modal.open{display:flex}
+.camera-shell{width:min(1100px,100%);height:min(94svh,850px);display:flex;flex-direction:column;gap:10px}
+.camera-head{display:flex;align-items:center;justify-content:space-between;color:var(--gold);padding:4px}
+.camera-head h2{margin:0;font-size:1rem;letter-spacing:2px}
+.close{border:1px solid #8d6419;background:#100a05;color:var(--gold);border-radius:20px;padding:8px 14px;cursor:pointer}
+.camera{
+  position:relative;flex:1;min-height:0;overflow:hidden;border:2px solid #a87518;
+  background:#000;box-shadow:0 0 30px #b5791c44;
+}
+#video,#photo{width:100%;height:100%;object-fit:cover;display:block}
+#photo{display:none}
+.overlay{position:absolute;inset:0;pointer-events:none;display:flex}
+.overlay img{width:100%;height:100%;object-fit:fill}
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.controls button{
+  background:linear-gradient(135deg,#3a2e1d,#1a140d);color:var(--gold);
+  border:1px solid var(--gold);padding:10px 14px;border-radius:9px;cursor:pointer;
+}
+.controls button:hover{background:var(--gold);color:#0b0704}
+.hint{text-align:center;color:#967638;font:12px Georgia,serif;margin:0}
+@media(max-width:700px){
+  .topbar{height:auto;padding:8px 10px;align-items:flex-start}
+  .brand{display:none}.nav{width:100%;justify-content:center}
+  .nav button{padding:6px 9px;font-size:10px}
+  .hero{min-height:760px;background-position:center top}
+  .hero-actions{top:54%;grid-template-columns:repeat(2,1fr);gap:9px}
+  .action{padding:11px 8px;font-size:11px}
+  .section{padding:90px 5vw 50px}.card{padding:18px}
+  .camera-shell{height:96svh}.camera-head{padding-top:env(safe-area-inset-top)}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#inicio">ARQUIVO ÁUREO</a>
+  <nav class="nav" aria-label="Navegação">
+    <button onclick="go('historia')">História</button>
+    <button onclick="go('aplicacoes')">Aplicações</button>
+    <button onclick="openCamera()">Câmera</button>
+    <button onclick="go('teoremas')">Teoremas</button>
+    <button onclick="go('biblioteca')">Biblioteca</button>
+  </nav>
+</header>
+
+<main>
+<section id="inicio" class="hero">
+  <div class="hero-actions">
+    <button class="action" onclick="go('historia')">HISTÓRIA</button>
+    <button class="action" onclick="go('aplicacoes')">APLICAÇÕES</button>
+    <button class="action" onclick="go('teoremas')">TEOREMAS</button>
+    <button class="action" onclick="openCamera()">CÂMERA</button>
+    <button class="action" onclick="go('biblioteca')">BIBLIOTECA</button>
+  </div>
+</section>
+
+<section id="historia" class="section">
+<div class="content">
+<h2>HISTÓRIA</h2>
+<div class="card"><h3>Grécia Antiga e Pitagóricos</h3>
+<p>Segundo a escola pitagórica, fundada por Pitágoras no século VI a.C., o universo era concebido como uma estrutura regida pelos números. O pentagrama, devido às suas propriedades geométricas, foi adotado como símbolo místico da irmandade pitagórica. Para os pitagóricos, a razão entre a diagonal e o lado de um pentágono regular resultava no número de ouro (Φ).</p></div>
+<div class="card"><h3>Euclides e a primeira definição formal</h3>
+<p>Por volta de 300 a.C., Euclides de Alexandria registrou uma definição formal da proporção em “Os Elementos”, chamando-a de “divisão em média e extrema razão”. A construção geométrica permitiu a criação do retângulo áureo, cujas proporções são mantidas quando quadrados menores são extraídos.</p></div>
+<div class="card"><h3>O número Phi (Φ)</h3>
+<p>Φ é a solução positiva de x² − x − 1 = 0, resultando em Φ = (1 + √5) / 2 ≈ 1,618033988… Suas propriedades incluem Φ² = Φ + 1 e seu inverso 1/Φ ≈ 0,618…</p></div>
+<div class="card"><h3>Renascimento: Luca Pacioli e Leonardo da Vinci</h3>
+<p>No Renascimento, Luca Pacioli rebatizou o conceito em seu tratado “De Divina Proportione” (1509). O livro foi ilustrado por Leonardo da Vinci, associado no material à busca de harmonia por meio da proporção.</p></div>
+<div class="card"><h3>Fibonacci e a relação com Φ</h3>
+<p>Leonardo Fibonacci introduziu a sequência 1, 1, 2, 3, 5, 8, 13, 21… no “Liber Abaci” (1202). À medida que os números crescem, a razão entre termos consecutivos aproxima-se progressivamente do número de ouro.</p></div>
+</div>
+</section>
+
+<section id="aplicacoes" class="section">
+<div class="content">
+<h2>APLICAÇÕES DA PROPORÇÃO ÁUREA</h2>
+<div class="card"><h3>Matemática e teoria dos números</h3><p>Φ é apresentado como uma razão contínua simples. A autossimilaridade do retângulo áureo, pela remoção repetida de quadrados, gera a espiral áurea.</p></div>
+<div class="card"><h3>Educação matemática</h3><p>A proporção áurea pode integrar álgebra e geometria por meio de visualização e construções geométricas, explorando semelhança e proporcionalidade.</p></div>
+<div class="card"><h3>Física e astronomia</h3><p>O material relaciona a proporção áurea à geometria de quasicristais e descreve associações com padrões de espirais e a história da astronomia.</p></div>
+<div class="card"><h3>Computação</h3><p>A sequência de Fibonacci aparece em algoritmos, incluindo busca de Fibonacci e aplicações de programação dinâmica.</p></div>
+<div class="card"><h3>Arquitetura — fatos e mitos</h3><p>O material destaca o sistema Le Modulor de Le Corbusier e ressalta que a associação do Partenon à razão áurea não possui confirmação escrita da época.</p></div>
+<div class="card"><h3>Arte e fotografia</h3><p>A proporção áurea é apresentada como recurso de equilíbrio e direção visual. Na fotografia, a espiral áurea funciona como guia de composição para conduzir o olhar ao ponto focal.</p></div>
+<div class="card"><h3>Engenharia e natureza</h3><p>O material relaciona filotaxia, ângulo áureo de aproximadamente 137,5° e padrões de números de Fibonacci observados em estruturas naturais.</p></div>
+</div>
+</section>
+
+<section id="teoremas" class="section">
+<div class="content">
+<h2>TEOREMAS</h2>
+<div class="card"><h3>Divisão em média e extrema razão</h3>
+<p>Uma seção especial para estudar as construções geométricas e relações matemáticas ligadas à razão áurea.</p></div>
+<div class="card"><h3>Propriedades de Φ</h3><p>Φ² = Φ + 1 &nbsp; • &nbsp; 1/Φ = Φ − 1 &nbsp; • &nbsp; Φ ≈ 1,618033988…</p></div>
+</div>
+</section>
+
+<section id="biblioteca" class="section">
+<div class="content">
+<h2>BIBLIOTECA</h2>
+<div class="card"><h3>Arquivo de estudos</h3><p>Espaço reservado para reunir livros, referências, imagens, construções e outros materiais sobre a proporção áurea.</p></div>
+</div>
+</section>
+</main>
+
+<div id="cameraModal" class="camera-modal" aria-hidden="true">
+  <div class="camera-shell">
+    <div class="camera-head">
+      <h2>CÂMERA ÁUREA PRO</h2>
+      <button class="close" onclick="closeCamera()">Fechar</button>
+    </div>
+    <div class="camera">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="photo"></canvas>
+      <div class="overlay"><img src="desenho-aureo.png" alt="Desenho da espiral áurea"></div>
+    </div>
+    <div class="controls">
+      <button id="switch">🔄 Alternar câmera</button>
+      <button id="rotate">📐 Girar espiral</button>
+      <button id="capture">📸 Capturar foto</button>
+      <button id="reset" style="display:none">❌ Refazer</button>
+    </div>
+    <p class="hint">Permita o acesso à câmera quando o navegador solicitar. O site deve estar em HTTPS.</p>
+  </div>
+</div>
+
+<script>
+const modal=document.getElementById('cameraModal');
+const video=document.getElementById('video');
+const canvas=document.getElementById('photo');
+const overlay=document.querySelector('.overlay');
+const switchBtn=document.getElementById('switch');
+const rotateBtn=document.getElementById('rotate');
+const captureBtn=document.getElementById('capture');
+const resetBtn=document.getElementById('reset');
+let facing='environment', rotation=0, stream=null, frozen=false;
+
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+async function startCamera(){
+  try{
+    if(stream) stream.getTracks().forEach(t=>t.stop());
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:facing,width:{ideal:1280},height:{ideal:720}},audio:false
+    });
+    video.srcObject=stream;
+    video.style.transform=facing==='user'?'scaleX(-1)':'none';
+    resetCamera();
+  }catch(e){
+    alert('Não foi possível acessar a câmera. Autorize a câmera e abra o site usando HTTPS.');
+  }
+}
+function openCamera(){modal.classList.add('open');modal.setAttribute('aria-hidden','false');startCamera();}
+function closeCamera(){
+  modal.classList.remove('open');modal.setAttribute('aria-hidden','true');
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+}
+switchBtn.onclick=()=>{facing=facing==='environment'?'user':'environment';startCamera();}
+rotateBtn.onclick=()=>{rotation=(rotation+90)%360;overlay.style.transform=`rotate(${rotation}deg)`;}
+captureBtn.onclick=()=>{
+  if(frozen)return;
+  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+  const ctx=canvas.getContext('2d');
+  if(facing==='user'){ctx.scale(-1,1);ctx.drawImage(video,-canvas.width,0);ctx.setTransform(1,0,0,1,0,0);}
+  else ctx.drawImage(video,0,0);
+  video.style.display='none';canvas.style.display='block';frozen=true;
+  captureBtn.style.display='none';resetBtn.style.display='inline-block';
+};
+resetBtn.onclick=resetCamera;
+function resetCamera(){
+  video.style.display='block';canvas.style.display='none';frozen=false;
+  captureBtn.style.display='inline-block';resetBtn.style.display='none';
+}
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeCamera();});
+</script>
+</body>
+</html>
